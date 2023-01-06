@@ -1,0 +1,112 @@
+@import 'open-color';
+
+/* #region Header */
+
+.logo {
+    margin: 0;
+
+    color: $oc-gray-8;
+    font-size: 3em;
+
+    font-family: 'Courier Prime', monospace;
+    font-weight: normal;
+
+    span {
+        color: $oc-gray-6;
+    }
+}
+
+.description {
+    display: flex;
+
+    flex-direction: column;
+    gap: 0.1em;
+
+    color: $oc-gray-8;
+    font-family: 'Ubuntu', monospace;
+
+    p { margin: 0; }
+}
+
+header {
+    grid-area: header;
+
+    display: flex;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
+}
+
+/* #endregion */
+
+/* #region Main */
+main {
+    grid-area: main;
+
+    padding: 2em;
+
+    input {
+        display: none;
+    }
+}
+
+.fileSelector {
+    display: flex;
+
+    height: 100%;
+
+    background-color: $oc-gray-2;
+
+    flex-direction: column;
+    justify-content: center;
+
+    border: 2px dashed $oc-gray-6;
+    border-radius: 2em;
+
+    color: $oc-gray-6;
+    font-family: monospace;
+    font-size: 1.5em;
+
+    cursor: pointer;
+
+    &.hovering-file {
+        background-color: $oc-indigo-2;
+    }
+    &.selected {
+        background-color: $oc-green-3;
+
+        label[on-waiting] {
+            display: none;
+        }
+        label[on-selected] {
+            display: flex;
+        }
+    }
+
+    label {
+        display: flex;
+
+        flex-direction: column;
+        justify-content: center;
+
+        height: 100%;
+
+        cursor: inherit;
+
+        &[on-selected] {
+            display: none;
+        }
+
+        p {
+            margin: 0;
+            
+            cursor: inherit;
+            
+            text-align: center;
+        }
+    }
+}
+
+/* #endregion */

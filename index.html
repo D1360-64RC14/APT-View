@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>APT#View</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles/main.css">
+</head>
+
+<body data-state="intro" data-theme="light">
+    <header for-state="intro">
+        <h1 class="logo">
+            APT<span>#</span>View
+        </h1>
+        <span class="description">
+            <p>Wanna remember which apps you have installed/removed/updated?</p>
+            <p>Follow the steps below to see them!</p>
+        </span>
+    </header>
+    <header for-state="file-view">
+        <!-- TODO: -->
+    </header>
+    <hr>
+    <main for-state="intro">
+        <form action="_blank" class="fileSelector" data-state="waiting-file">
+
+            <label for-state="waiting-file" for="fileInput" title="Or click to open the upload window...">
+                <p>Drop your</p>
+                <p>/var/log/apt/history.log</p>
+                <p>file here</p>
+            </label>
+
+            <label for-state="file-selected" class="hidden" for="fileInput">
+                <p>Selected <b class="filename">FILENAME HERE</b></p>
+            </label>
+
+            <label for-state="analyzing" class="hidden">
+                <p>Analyzing <b class="filename">FILENAME HERE</b>...</p>
+            </label>
+
+            <label for-state="error" class="hidden">
+                <p>Error</p>
+                <p>ERROR MESSAGE HERE</p>
+            </label>
+
+            <input type="file" id="fileInput">
+        </form>
+    </main>
+    <main for-state="file-view">
+        <!-- TODO: -->
+    </main>
+</body>
+<script type="module" src="static/scripts/index.js"></script>
+
+</html>
