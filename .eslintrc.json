@@ -7,8 +7,7 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended"
     ],
-    "overrides": [
-    ],
+    "overrides": [],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -18,6 +17,12 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "semi": "warn",
+        "eqeqeq": "warn",
+        "no-catch-shadow": "warn",
+        "no-else-return": "warn",
+        "no-empty-function": "off",
+        "no-var": "error"
     },
     "root": true
 }
