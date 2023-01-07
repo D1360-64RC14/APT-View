@@ -40,15 +40,15 @@ export class FileSelector {
         this.form.classList.add('hovering-file');
     }
     private whenFileHoverOffSelector() {
-        this.state = SelectorStates.WAITING
+        this.state = SelectorStates.WAITING;
 
         this.form.classList.remove('hovering-file');
     }
     private whenFileDropped(event: DragEvent) {
         event.preventDefault();
 
-        this.state = SelectorStates.SELECTED
-        console.log(event.dataTransfer?.files)
+        this.state = SelectorStates.SELECTED;
+        console.log(event.dataTransfer?.files);
 
         if (event.dataTransfer) {
             for (let i = 0; i < event.dataTransfer.files.length; i++) {

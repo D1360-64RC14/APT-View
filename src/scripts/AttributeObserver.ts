@@ -1,12 +1,12 @@
 import { InvalidElementTypeError } from "./Errors.js";
-import { Observer } from "./Observer.js";
+import { EventObserver } from "./EventObserver.js";
 
 interface AttributeDataEvent {
     name: string,
     value: string | null
 }
 
-export class AttributeObserver extends Observer<AttributeDataEvent> {
+export class AttributeObserver extends EventObserver<AttributeDataEvent> {
     private observedElement: Element;
     private mutationObserver: MutationObserver;
 
