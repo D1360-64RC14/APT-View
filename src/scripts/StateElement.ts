@@ -28,7 +28,7 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * called `for-state` in it, with the desired state.
  */
 export class StateElement {
-    private _rootElement: HTMLElement;
+    private _root: HTMLElement;
     private _supportedStates: string[];
     private _childStateItems: HTMLElement[] = [];
     private currentState: string;
@@ -38,7 +38,7 @@ export class StateElement {
     private stateItems = new Map<string, HTMLElement[]>();
 
     constructor(element: HTMLElement, supportedStates: string[], initialState?: string) {
-        this._rootElement = element;
+        this._root = element;
         this._supportedStates = supportedStates;
 
         const attributeState = this.validateElementHaveAttributeAndReturnIt();
@@ -56,9 +56,27 @@ export class StateElement {
         }
     }
 
+    // #region static
+    /** @throws {TypeError, InvalidElementTypeError} */
+    static fromSelector(cssSelector: string, supportedStates: string[]) {
+        const result = document.querySelectorAll(cssSelector);
+
+        if (result.length === 0) throw new TypeError(`Not found elements with selector "${cssSelector}"`);
+
+        const element = result.item(0);
+
+        InvalidElementTypeError.check(element, HTMLElement);
+
+        if (result.length > 1) console.warn(`There was found other ${result.length - 1} elements with selector ${cssSelector}`);
+
+        // Its beeing checked for HTMLElement at InvalidElementTypeError.check
+        return new StateElement(element as HTMLElement, supportedStates);
+    }
+    // #endregion
+
     // #region private
     private validateElementHaveAttributeAndReturnIt() {
-        const attribute = this._rootElement.getAttribute('data-state');
+        const attribute = this._root.getAttribute('data-state');
         if (attribute) return attribute;
 
         throw new ElementHaventStateError;
@@ -71,7 +89,7 @@ export class StateElement {
     }
 
     private searchForStateItems() {
-        const { children } = this._rootElement;
+        const { children } = this._root;
 
         // Faster than copying the collection to a new array.
         for (let i = 0; i < children.length; i++) {
@@ -92,8 +110,8 @@ export class StateElement {
     // #endregion
 
     // #region public
-    get rootElement() {
-        return this._rootElement;
+    get root() {
+        return this._root;
     }
     get childStateItems() {
         return this._childStateItems;
@@ -129,23 +147,6 @@ export class StateElement {
 
         this.currentState = stateName;
         this.updateItemsVisibility();
-    }
-    // #endregion
-
-    // #region static
-    static fromSelector(cssSelector: string, supportedStates: string[]) {
-        const result = document.querySelectorAll(cssSelector);
-
-        if (result.length === 0) throw new TypeError(`Not found elements with selector "${cssSelector}"`);
-
-        const element = result.item(0);
-
-        InvalidElementTypeError.check(element, HTMLElement);
-
-        if (result.length > 1) console.warn(`There was found other ${result.length - 1} elements with selector ${cssSelector}`);
-
-        // Its beeing checked for HTMLElement at InvalidElementTypeError.check
-        return new StateElement(element as HTMLElement, supportedStates);
     }
     // #endregion
 }
