@@ -140,6 +140,11 @@ export class StateElement {
                 item.style.display = 'none';
             }
         }
+
+        this.updateDataStateAttribute();
+    }
+    updateDataStateAttribute() {
+        this._root.setAttribute('data-state', this.currentState);
     }
 
     changeStateTo(stateName: string) {
