@@ -11,10 +11,10 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  *      <span for-state="first">
  *      </span>
  * 
- *      <span for-state="second">
+ *      <span for-state="second" class="hidden">
  *      </span>
  * 
- *      <span for-state="third">
+ *      <span for-state="third" class="hidden">
  *      </span>
  * </main>
  * ```
@@ -26,6 +26,10 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * Then, you can define which elements will be
  * turned on in each state placing an attribute
  * called `for-state` in it, with the desired state.
+ * 
+ * You can add an `hidden` class to prevent other
+ * items from beeing displayed during initialization.
+ * It will be removed when all get done!
  */
 export class StateElement {
     private _root: HTMLElement;
@@ -54,6 +58,8 @@ export class StateElement {
         } else {
             this.updateItemsVisibility();
         }
+
+        this.removeClassHidden();
     }
 
     // #region static
@@ -105,6 +111,19 @@ export class StateElement {
 
             this.stateItems.get(stateName)?.push(element);
             this._childStateItems.push(element);
+        }
+    }
+
+    private removeClassHidden() {
+        const { children } = this._root;
+
+        for (let i = 0; i < children.length; i++) {
+            const element = children.item(i);
+
+            if (element === null) continue;
+            if (!(element instanceof HTMLElement)) continue;
+
+            element.classList.remove('hidden');
         }
     }
     // #endregion
