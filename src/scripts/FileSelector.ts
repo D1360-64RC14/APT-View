@@ -1,14 +1,7 @@
 import { InvalidElementTypeError } from "./Errors.js";
-import { StateElement } from "./StateElement.js";
+import { FileSelectorStateController } from "./FileSelectorStateController.js";
 
-interface FileSelectorStates {
-    waitingFile: HTMLLabelElement;
-    fileSelected: HTMLLabelElement;
-    analyzingFIle: HTMLLabelElement;
-    error: HTMLLabelElement;
-}
-
-export class FileSelector {
+export class FileSelector extends FileSelectorStateController {
     readonly validStates = {
         WAITING: 'waiting-file',
         SELECTED: 'file-selected',
@@ -18,22 +11,8 @@ export class FileSelector {
 
     private fileInput: HTMLInputElement;
 
-    private stateItems: FileSelectorStates;
-    private statefulForm: StateElement;
-
     constructor(formElement: HTMLFormElement) {
-        this.statefulForm = new StateElement(
-            formElement,
-            this.validStateList,
-            this.validStates.WAITING
-        );
-
-        this.stateItems = {
-            waitingFile: this.formQueryOrThrow('label[for-state="waiting-file"]'),
-            fileSelected: this.formQueryOrThrow('label[for-state="file-selected"]'),
-            analyzingFIle: this.formQueryOrThrow('label[for-state="analyzing"]'),
-            error: this.formQueryOrThrow('label[for-state="error"]')
-        };
+        super(formElement);
 
         this.fileInput = this.formQueryOrThrow('input');
 
@@ -60,13 +39,6 @@ export class FileSelector {
     // #endregion
 
     // #region private
-    /** @throws {Error} */
-    private formQueryOrThrow<E extends Element = Element>(selector: string): E {
-        const element = this.statefulForm.root.querySelector<E>(selector);
-        if (!element) throw new Error(`Mandatory element by selector "${selector}" not found inside form`);
-        return element;
-    }
-
     private attachListeners() {
         this.fileInput.addEventListener('input', this.whenFileSelected.bind(this));
 
@@ -99,7 +71,7 @@ export class FileSelector {
         this.switchToFileSelectedState(dataTransfer.files);
         this.fileHover(false);
     }
-    private whenFileSelected(event: Event) {
+    private whenFileSelected(/*event: Event*/) {
         const { files } = this.fileInput;
 
         if (!files) {
@@ -108,51 +80,6 @@ export class FileSelector {
         }
 
         this.switchToFileSelectedState(files);
-    }
-
-    private fileHover(enable: boolean) {
-        if (enable) {
-            this.statefulForm.root.classList.add('hovering-file');
-        } else {
-            this.statefulForm.root.classList.remove('hovering-file');
-        }
-    }
-
-    private switchToWaitingFileState() {
-        // Just to garantee
-        this.fileHover(false);
-
-        this.statefulForm.changeStateTo(this.validStates.WAITING);
-    }
-    private switchToFileSelectedState(files: FileList) {
-        const filenameBEl = this.stateItems.fileSelected.querySelector<HTMLElement>('b.filename');
-        if (!filenameBEl) throw new TypeError('b.filename not found: is null');
-
-        const file = files.item(0);
-
-        if (!file) {
-            this.switchToErrorState('File item index 0 not found');
-            return;
-        }
-
-        filenameBEl.innerText = file.name;
-        console.log(files);
-
-        this.statefulForm.changeStateTo(this.validStates.SELECTED);
-    }
-    private switchToErrorState(errorMessage: string) {
-        const pEl = this.stateItems.error.querySelector<HTMLParagraphElement>('p.errorMessage');
-        if (!pEl) throw new TypeError('p.errorMessage not found: is null');
-
-        pEl.innerText = errorMessage;
-
-        this.statefulForm.changeStateTo(this.validStates.ERROR);
-    }
-    // #endregion
-
-    // #region public
-    get validStateList() {
-        return Object.values(this.validStates);
     }
     // #endregion
 }
