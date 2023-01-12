@@ -5,18 +5,15 @@
 # compiler with 'screen'.
 # ----------------------------------
 
-function hasProgram {
-    local programName=$1
+CURRENT_DIRECTORY=$(pwd | rev | cut -d '/' -f 1 | rev)
 
-    which $programName > /dev/null
-    if [[ $? != 0 ]]; then
-        # if return code is not zero
-        echo "The program \"$programName\" is mandatory. Install it and try again."
-        return 1
-    fi
-}
+if [[ $CURRENT_DIRECTORY == 'scripts' ]]; then
+    source ./utils.sh
+else
+    source ./scripts/utils.sh
+fi
 
-# Check if screen, sass and tsc are installed
+# Check if screen and npx are installed
 hasProgram 'npx'
 hasProgram 'screen'
 

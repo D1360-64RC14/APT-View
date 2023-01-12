@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "watch": "./scripts/watch.sh",
-    "clean": "./scripts/clean.sh"
+    "clean": "./scripts/clean.sh",
+    "build": "./scripts/build.sh"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.48.0",
