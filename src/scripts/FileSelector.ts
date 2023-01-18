@@ -17,7 +17,6 @@ export class FileSelector {
         this.fileInput = this.stateController.formQueryOrThrow('input');
 
         this.attachListeners();
-        this.stateController.switchToWaitingFileState();
     }
 
     // #region static
