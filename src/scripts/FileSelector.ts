@@ -1,7 +1,7 @@
 import { InvalidElementTypeError } from "./Errors.js";
 import { FileSelectorStateController } from "./FileSelectorStateController.js";
 
-export class FileSelector extends FileSelectorStateController {
+export class FileSelector {
     readonly validStates = {
         WAITING: 'waiting-file',
         SELECTED: 'file-selected',
@@ -10,14 +10,14 @@ export class FileSelector extends FileSelectorStateController {
     };
 
     private fileInput: HTMLInputElement;
+    private stateController: FileSelectorStateController;
 
     constructor(formElement: HTMLFormElement) {
-        super(formElement);
-
-        this.fileInput = this.formQueryOrThrow('input');
+        this.stateController = new FileSelectorStateController(formElement);
+        this.fileInput = this.stateController.formQueryOrThrow('input');
 
         this.attachListeners();
-        this.switchToWaitingFileState();
+        this.stateController.switchToWaitingFileState();
     }
 
     // #region static
@@ -42,20 +42,20 @@ export class FileSelector extends FileSelectorStateController {
     private attachListeners() {
         this.fileInput.addEventListener('input', this.whenFileSelected.bind(this));
 
-        this.stateItems.waitingFile.addEventListener('dragover', this.whenFileIsOverSelector.bind(this));
-        this.stateItems.waitingFile.addEventListener('dragleave', this.whenFileHoverOffSelector.bind(this));
-        this.stateItems.waitingFile.addEventListener('drop', this.whenFileDropped.bind(this));
+        this.stateController.stateItems.waitingFile.addEventListener('dragover', this.whenFileIsOverSelector.bind(this));
+        this.stateController.stateItems.waitingFile.addEventListener('dragleave', this.whenFileHoverOffSelector.bind(this));
+        this.stateController.stateItems.waitingFile.addEventListener('drop', this.whenFileDropped.bind(this));
     }
 
     private whenFileIsOverSelector(event: DragEvent) {
         event.preventDefault();
 
-        this.fileHover(true);
+        this.stateController.fileHover(true);
     }
     private whenFileHoverOffSelector(event: DragEvent) {
         event.preventDefault();
 
-        this.fileHover(false);
+        this.stateController.fileHover(false);
     }
     private whenFileDropped(event: DragEvent) {
         event.preventDefault();
@@ -63,23 +63,23 @@ export class FileSelector extends FileSelectorStateController {
         const { dataTransfer } = event;
 
         if (!dataTransfer) {
-            this.switchToErrorState('Error on dataTransfer');
+            this.stateController.switchToErrorState('Error on dataTransfer');
             console.log(dataTransfer);
             return;
         }
 
-        this.switchToFileSelectedState(dataTransfer.files);
-        this.fileHover(false);
+        this.stateController.switchToFileSelectedState(dataTransfer.files);
+        this.stateController.fileHover(false);
     }
     private whenFileSelected(/*event: Event*/) {
         const { files } = this.fileInput;
 
         if (!files) {
-            this.switchToErrorState('Ocurred an error while loading the file');
+            this.stateController.switchToErrorState('Ocurred an error while loading the file');
             return;
         }
 
-        this.switchToFileSelectedState(files);
+        this.stateController.switchToFileSelectedState(files);
     }
     // #endregion
 }
