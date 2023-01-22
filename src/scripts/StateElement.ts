@@ -19,7 +19,7 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * </main>
  * ```
  * 
- * You can place an `data-state` attribute to an
+ * You can place a `data-state` attribute to an
  * element to turn it into a state container.
  * This is your `dataStateId`.
  * 
@@ -30,6 +30,9 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * You can add an `hidden` class to prevent other
  * items from beeing displayed during initialization.
  * It will be removed when all get done!
+ * 
+ * It is possible to enable a debug mode setting the
+ * attribute `data-debug`, or defining as 'true'.
  */
 export class StateElement {
     private _root: HTMLElement;
@@ -42,6 +45,7 @@ export class StateElement {
     private stateItems = new Map<string, HTMLElement[]>();
 
     constructor(element: HTMLElement, supportedStates: string[], initialState?: string) {
+        // TODO: Refact constructor logic
         this._root = element;
         this._supportedStates = supportedStates;
 
@@ -50,10 +54,17 @@ export class StateElement {
         this.checkIsSupportedStateOrThrow(attributeState);
         this.currentState = attributeState;
 
+        if (this.isDebugEnable) {
+            console.warn(
+                'Debug mode is enable on the element', this._root, '.',
+                (initialState ? `Using initialState "${attributeState}" instead of "${initialState}".` : '')
+            );
+        }
+
         this.populateStateItems();
         this.searchForStateItems();
 
-        if (initialState) {
+        if (initialState && !this.isDebugEnable) {
             this.changeStateTo(initialState);
         } else {
             this.updateItemsVisibility();
@@ -140,6 +151,17 @@ export class StateElement {
     }
     get state() {
         return this.currentState;
+    }
+    get isDebugEnable() {
+        const attribute = this._root.getAttribute('data-debug');
+
+        switch (attribute?.toLowerCase()) {
+            case 'true':
+            case '':
+                return true;
+            default:
+                return false;
+        }
     }
 
     checkIsSupportedState(name: string): boolean {
