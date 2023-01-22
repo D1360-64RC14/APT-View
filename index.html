@@ -23,7 +23,7 @@
     </header>
     <hr>
     <main for-state="intro">
-        <form action="_blank" class="fileSelector" data-state="waiting-file">
+        <form action="_blank" class="fileSelector" data-state="file-selected" data-debug>
 
             <label for-state="waiting-file" for="fileInput" title="Or click to open the upload window...">
                 <p>Drop your</p>
@@ -33,6 +33,10 @@
 
             <label for-state="file-selected" class="hidden" for="fileInput">
                 <p>Selected <b class="filename">FILENAME HERE</b></p>
+                <button class="interaction side-icon">
+                    <span class="text">Continue</span>
+                    <span class="icon"></span>
+                </button>
             </label>
 
             <label for-state="analyzing" class="hidden">

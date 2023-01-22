@@ -1,3 +1,4 @@
+@use 'components';
 @import 'open-color';
 
 /* #region Header */
@@ -55,6 +56,14 @@ main {
 /* #region FormFileSelector */
 
 .fileSelector {
+    @include components.button-side-icon(
+        $oc-green-5,
+        $oc-green-4,
+        $oc-gray-1,
+        url('/assets/keyboard_arrow_right.svg'),
+        $oc-gray-1
+    );
+
     display: flex;
 
     height: 100%;
@@ -72,6 +81,7 @@ main {
     font-size: 1.5em;
 
     cursor: pointer;
+    overflow: hidden;
 
     &.hovering-file {
         background-color: $oc-indigo-2;
@@ -91,7 +101,7 @@ main {
         display: flex;
 
         flex-direction: column;
-        justify-content: center;
+        align-items: center;
 
         height: 100%;
 
@@ -105,8 +115,19 @@ main {
             margin: 0;
             
             cursor: inherit;
-            
-            text-align: center;
+        }
+
+        &:has(.interaction) p {
+            position: relative;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+        }
+
+        .interaction {
+            position: relative;
+            top: 60%;
         }
     }
 }
