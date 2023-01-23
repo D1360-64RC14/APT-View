@@ -14,3 +14,7 @@ function hasProgram {
     >&2 echo "The program \"$programName\" is mandatory. Install it and try again."
     exit $exitCode
 }
+
+function cleanStaticFolder {
+    rm -rf ./static/*
+}

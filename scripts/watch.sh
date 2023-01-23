@@ -39,6 +39,10 @@ fi
 
 sleep 0.1
 
+cleanStaticFolder
+
+sleep 0.1
+
 # Create a session
 screen -dmS $SESSION_NAME
 

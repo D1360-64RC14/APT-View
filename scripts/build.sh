@@ -10,5 +10,9 @@ fi
 
 hasProgram 'npx'
 
+cleanStaticFolder
+
+sleep 0.1
+
 npx sass --verbose --no-quiet --no-source-map src/styles:static/styles
 npx tsc --build --verbose --force
