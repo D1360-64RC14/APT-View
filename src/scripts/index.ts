@@ -1,4 +1,4 @@
-import { FileSelector } from './FileSelector.js';
+import { FileSelector } from './FileSelector/FileSelector.js';
 import { StateElement } from './StateElement.js';
 
 const validHeaderStates = ['intro', 'file-view'];

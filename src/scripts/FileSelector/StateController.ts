@@ -1,4 +1,5 @@
-import { StateElement } from "./StateElement.js";
+import { StateElement } from "../StateElement.js";
+import { FileController } from "./FileController.js";
 
 interface FileSelectorStates {
     waitingFile: HTMLLabelElement;
@@ -7,7 +8,7 @@ interface FileSelectorStates {
     error: HTMLLabelElement;
 }
 
-export class FileSelectorStateController {
+export class StateController {
     readonly validStates = {
         WAITING: 'waiting-file',
         SELECTED: 'file-selected',
@@ -18,7 +19,9 @@ export class FileSelectorStateController {
     private _stateItems: FileSelectorStates;
     private _statefulForm: StateElement;
 
-    constructor(formElement: HTMLFormElement) {
+    private fileController: FileController;
+
+    constructor(formElement: HTMLFormElement, fileController: FileController) {
         this._statefulForm = new StateElement(
             formElement,
             this.validStateList,
@@ -26,11 +29,13 @@ export class FileSelectorStateController {
         );
 
         this._stateItems = {
-            waitingFile: this.formQueryOrThrow('label[for-state="waiting-file"]'),
-            fileSelected: this.formQueryOrThrow('label[for-state="file-selected"]'),
-            analyzingFIle: this.formQueryOrThrow('label[for-state="analyzing"]'),
-            error: this.formQueryOrThrow('label[for-state="error"]')
+            waitingFile: this.formQueryOrThrow('section[for-state="waiting-file"]'),
+            fileSelected: this.formQueryOrThrow('section[for-state="file-selected"]'),
+            analyzingFIle: this.formQueryOrThrow('section[for-state="analyzing"]'),
+            error: this.formQueryOrThrow('section[for-state="error"]')
         };
+
+        this.fileController = fileController;
     }
 
     /** @throws {Error} */
@@ -66,8 +71,8 @@ export class FileSelectorStateController {
         }
 
         filenameBEl.innerText = file.name;
-        console.log(files);
 
+        this.fileController.sendFile(file);
         this._statefulForm.changeStateTo(this.validStates.SELECTED);
     }
     switchToErrorState(errorMessage: string) {
