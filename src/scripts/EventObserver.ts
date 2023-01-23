@@ -1,4 +1,4 @@
-type EventObserverCallback<E> = (event: E) => void;
+export type EventObserverCallback<E> = (event: E) => void;
 
 export class EventObserver<E> {
     private callbacks = new Set<EventObserverCallback<E>>;
