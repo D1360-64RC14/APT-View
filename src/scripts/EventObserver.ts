@@ -1,7 +1,7 @@
 type EventObserverCallback<E> = (event: E) => void;
 
 export class EventObserver<E> {
-    private callbacks: EventObserverCallback<E>[] = [];
+    private callbacks = new Set<EventObserverCallback<E>>;
 
     // Emits an data event to the observer
     emit(event: E) {
@@ -12,24 +12,29 @@ export class EventObserver<E> {
 
     // Observe/Subscribe to/Listen to events
     observe(callback: EventObserverCallback<E>) {
-        this.callbacks.push(callback);
+        this.callbacks.add(callback);
+    }
+
+    // Observe/Subscribe to/Listen to events only once
+    observeOnce(callback: EventObserverCallback<E>) {
+        const onceFunction = (event: E) => {
+            callback(event);
+            this.callbacks.delete(onceFunction);
+        };
+
+        this.callbacks.add(onceFunction);
     }
 
     // Stop receiving events from this observer
     remove(callback: EventObserverCallback<E>) {
-        const cbIndex = this.callbacks.indexOf(callback);
-
-        if (cbIndex === -1) return false;
-
-        this.callbacks.splice(cbIndex);
-        return true;
+        return this.callbacks.delete(callback);
     }
 
     // Remove all observers
     clearObservers() {
-        const { length } = this.callbacks;
-        this.callbacks = [];
+        const { size } = this.callbacks;
+        this.callbacks.clear();
 
-        return length;
+        return size;
     }
 }
