@@ -23,30 +23,56 @@
     </header>
     <hr>
     <main for-state="intro">
-        <form action="_blank" class="fileSelector" data-state="file-selected" data-debug>
+        <form class="fileSelector" data-state="waiting-file" data-debug>
 
-            <label for-state="waiting-file" for="fileInput" title="Or click to open the upload window...">
-                <p>Drop your</p>
-                <p>/var/log/apt/history.log</p>
-                <p>file here</p>
-            </label>
+            <section for-state="waiting-file" accept-file title="Or click to open the upload window...">
+                <h3 class="hidden">File selection step</h3>
 
-            <label for-state="file-selected" class="hidden" for="fileInput">
-                <p>Selected <b class="filename">FILENAME HERE</b></p>
-                <button class="interaction side-icon">
-                    <span class="text">Continue</span>
-                    <span class="icon"></span>
-                </button>
-            </label>
+                <article class="text">
+                    <p class="break">
+                        <span>Drop your</span>
+                        <span>/var/log/apt/history.log</span>
+                        <span>file here</span>
+                    </p>
+                </article>
+            </section>
 
-            <label for-state="analyzing" class="hidden">
-                <p>Analyzing <b class="filename">FILENAME HERE</b>...</p>
-            </label>
+            <section for-state="file-selected" accept-file class="hidden">
+                <h3 class="hidden">File selected step</h3>
 
-            <label for-state="error" class="hidden">
-                <p>Error</p>
-                <p class="errorMessage">ERROR MESSAGE HERE</p>
-            </label>
+                <article class="text">
+                    <p>
+                        <span>Selected</span>
+                        <b class="filename">FILENAME HERE</b>
+                    </p>
+                </article>
+                <article class="interaction">
+                    <button class="side-icon">
+                        <span class="text">Continue</span>
+                        <span class="icon"></span>
+                    </button>
+                </article>
+            </section>
+
+            <section for-state="analyzing" class="hidden">
+                <h3 class="hidden">File analysis step</h3>
+
+                <article class="text">
+                    <p>
+                        <span>Analyzing</span>
+                        <b class="filename">FILENAME HERE</b><span>...</span>
+                    </p>
+                </article>
+            </section>
+
+            <section for-state="error" class="hidden">
+                <h3 class="hidden">Error message</h3>
+
+                <article class="text">
+                    <h3>Error</h3>
+                    <p class="errorMessage">ERROR MESSAGE HERE</p>
+                </article>
+            </section>
 
             <input type="file" id="fileInput">
         </form>

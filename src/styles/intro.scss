@@ -68,68 +68,76 @@ main {
 
     height: 100%;
 
-    background-color: $oc-gray-2;
-
     flex-direction: column;
-    justify-content: center;
-
-    border: 2px dashed $oc-gray-6;
-    border-radius: 2em;
 
     color: $oc-gray-6;
     font-family: monospace;
     font-size: 1.5em;
 
-    cursor: pointer;
     overflow: hidden;
 
-    &.hovering-file {
-        background-color: $oc-indigo-2;
-    }
-    &.selected {
-        background-color: $oc-green-3;
-
-        label[on-waiting] {
-            display: none;
-        }
-        label[on-selected] {
-            display: flex;
-        }
-    }
-
-    label {
+    section {
         display: flex;
+
+        height: 100%;
 
         flex-direction: column;
         align-items: center;
 
-        height: 100%;
+        background-color: $oc-gray-2;
 
-        cursor: inherit;
+        border: 2px dashed $oc-gray-6;
+        border-radius: 2em;
 
-        &[on-selected] {
-            display: none;
-        }
-
-        p {
-            margin: 0;
-            
-            cursor: inherit;
-        }
-
-        &:has(.interaction) p {
+        article {
             position: relative;
 
-            top: 50%;
+            max-width: 50%;
 
             transform: translateY(-50%);
-        }
 
-        .interaction {
-            position: relative;
-            top: 60%;
+            p.break span {
+                display: block;
+                margin: 0.2em 0;
+            }
+
+            &.text {
+                top: 50%;
+
+                text-align: center;
+            }
+            &.interaction {
+                top: 60%;
+            }
         }
     }
+}
+
+.fileSelector section {
+    &[accept-file] {
+        cursor: pointer;
+    }
+
+    &[for-state=waiting-file] {
+
+    }
+    &[for-state=file-selected] {
+        background-color: $oc-green-1;
+        border-color: $oc-green-6;
+    }
+    &[for-state=analyzing] {
+        background-color: $oc-yellow-1;
+        border-color: $oc-yellow-6;
+    }
+    &[for-state=error] {
+        background-color: $oc-red-1;
+        border-color: $oc-red-6;
+    }
+}
+
+.fileSelector.hovering-file section {
+    background-color: $oc-indigo-2;
+    border-color: $oc-indigo-6;
 }
 
 /* #endregion */

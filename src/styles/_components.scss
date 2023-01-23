@@ -6,38 +6,39 @@
     $icon-image-color
 ) {
     button.side-icon {
-        display: flex;
-    
+        display: inline-flex;
+
         margin: 0;
         padding: 0;
-    
+
         flex-direction: row;
-    
+        align-items: stretch;
+
         background-color: transparent;
         border: none;
-    
+
         font-family: inherit;
-    
+
         transition: all 0.25s;
         transition-timing-function: cubic-bezier(0.65,0.05,0.36,1);
-    
+
         span {
             position: relative;
-    
+
             border-radius: 0.5em;
-    
+
             transition: inherit;
         }
-    
+
         .text {
             z-index: 1;
-    
+
             right: -1.5em;
-    
+
             padding: 0.75em 1.25em;
-    
+
             background-color: $button-background-color;
-    
+
             font-size: 1em;
             color: $text-color;
             font-weight: bold;
@@ -45,37 +46,36 @@
         .icon {
             z-index: 0;
             display: flex;
-    
+
             width: 3em;
-            height: 100%;
-    
-            left: -2em;
-    
+
+            left: -1.5em;
+
             background-color: $icon-background-color;
-    
+
             justify-content: end;
-    
+
             &::after {
                 content: '';
-    
+
                 width: 1.75em;
                 height: 100%;
-    
+
                 -webkit-mask-image: $icon-image; mask-image: $icon-image;
                 -webkit-mask-position: center; mask-position: center;
                 -webkit-mask-size: 2.3em; mask-size: 2.3em;
                 -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    
+
                 background-color: $icon-image-color;
             }
         }
-    
+
         &:hover {
             .text {
-                right: 0;
+                right: -1em;
             }
             .icon {
-                left: -1.2em;
+                left: -0.2em;
             }
         }
     }
