@@ -2,16 +2,10 @@ import { FileController } from "./FileController";
 import { StateController } from "./StateController";
 
 export class ListenerController {
-    private stateController: StateController;
-    private fileController: FileController;
-
     constructor(
-        stateController: StateController,
-        fileController: FileController
-    ) {
-        this.stateController = stateController;
-        this.fileController = fileController;
-    }
+        private stateController: StateController,
+        private fileController: FileController
+    ) { }
 
     whenFileIsOverSelector(event: DragEvent) {
         event.preventDefault();
