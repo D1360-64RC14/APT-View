@@ -4,7 +4,7 @@ import { FileController } from "./FileController.js";
 interface FileSelectorStates {
     waitingFile: HTMLLabelElement;
     fileSelected: HTMLLabelElement;
-    analyzingFIle: HTMLLabelElement;
+    analyzingFile: HTMLLabelElement;
     error: HTMLLabelElement;
 }
 
@@ -31,7 +31,7 @@ export class StateController {
         this._stateItems = {
             waitingFile: this.formQueryOrThrow('section[for-state="waiting-file"]'),
             fileSelected: this.formQueryOrThrow('section[for-state="file-selected"]'),
-            analyzingFIle: this.formQueryOrThrow('section[for-state="analyzing"]'),
+            analyzingFile: this.formQueryOrThrow('section[for-state="analyzing"]'),
             error: this.formQueryOrThrow('section[for-state="error"]')
         };
 
