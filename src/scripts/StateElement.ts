@@ -35,9 +35,9 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * attribute `data-debug`, or defining as 'true'.
  */
 export class StateElement {
-    private _root: HTMLElement;
-    private _supportedStates: string[];
-    private _childStateItems: HTMLElement[] = [];
+    readonly root: HTMLElement;
+    readonly supportedStates: string[];
+    readonly childStateItems: HTMLElement[] = [];
     private currentState: string;
 
     // Keys: state name
@@ -46,8 +46,8 @@ export class StateElement {
 
     constructor(element: HTMLElement, supportedStates: string[], initialState?: string) {
         // TODO: Refact constructor logic
-        this._root = element;
-        this._supportedStates = supportedStates;
+        this.root = element;
+        this.supportedStates = supportedStates;
 
         const attributeState = this.validateElementHaveAttributeAndReturnIt();
 
@@ -56,7 +56,7 @@ export class StateElement {
 
         if (this.isDebugEnable) {
             console.warn(
-                'Debug mode is enable on the element', this._root, '.',
+                'Debug mode is enable on the element', this.root, '.',
                 (initialState ? `Using initialState "${attributeState}" instead of "${initialState}".` : '')
             );
         }
@@ -93,20 +93,20 @@ export class StateElement {
 
     // #region private
     private validateElementHaveAttributeAndReturnIt() {
-        const attribute = this._root.getAttribute('data-state');
+        const attribute = this.root.getAttribute('data-state');
         if (attribute) return attribute;
 
         throw new ElementHaventStateError;
     }
 
     private populateStateItems() {
-        for (const state of this._supportedStates) {
+        for (const state of this.supportedStates) {
             this.stateItems.set(state, []);
         }
     }
 
     private searchForStateItems() {
-        const { children } = this._root;
+        const { children } = this.root;
 
         // Faster than copying the collection to a new array.
         for (let i = 0; i < children.length; i++) {
@@ -121,12 +121,12 @@ export class StateElement {
             if (!this.checkIsSupportedState(stateName)) continue;
 
             this.stateItems.get(stateName)?.push(element);
-            this._childStateItems.push(element);
+            this.childStateItems.push(element);
         }
     }
 
     private removeClassHidden() {
-        const { children } = this._root;
+        const { children } = this.root;
 
         for (let i = 0; i < children.length; i++) {
             const element = children.item(i);
@@ -140,20 +140,11 @@ export class StateElement {
     // #endregion
 
     // #region public
-    get root() {
-        return this._root;
-    }
-    get childStateItems() {
-        return this._childStateItems;
-    }
-    get supportedStates() {
-        return this._supportedStates;
-    }
     get state() {
         return this.currentState;
     }
     get isDebugEnable() {
-        const attribute = this._root.getAttribute('data-debug');
+        const attribute = this.root.getAttribute('data-debug');
 
         switch (attribute?.toLowerCase()) {
             case 'true':
@@ -165,7 +156,7 @@ export class StateElement {
     }
 
     checkIsSupportedState(name: string): boolean {
-        return this._supportedStates.indexOf(name) !== -1;
+        return this.supportedStates.indexOf(name) !== -1;
     }
     checkIsSupportedStateOrThrow(name: string) {
         if (this.checkIsSupportedState(name)) return;
@@ -174,7 +165,7 @@ export class StateElement {
     }
 
     updateItemsVisibility() {
-        for (const item of this._childStateItems) {
+        for (const item of this.childStateItems) {
             if (item.getAttribute('for-state') === this.currentState) {
                 item.style.display = '';
             } else {
@@ -185,7 +176,7 @@ export class StateElement {
         this.updateDataStateAttribute();
     }
     updateDataStateAttribute() {
-        this._root.setAttribute('data-state', this.currentState);
+        this.root.setAttribute('data-state', this.currentState);
     }
 
     changeStateTo(stateName: string) {

@@ -1,12 +1,12 @@
 import { EventObserver, EventObserverCallback } from "../EventObserver";
 
 export class FileController {
-    private _input: HTMLInputElement;
+    readonly input: HTMLInputElement;
     private _lastFile: File | null = null;
-    private _fileObserver = new EventObserver<File>;
+    private fileObserver = new EventObserver<File>;
 
     constructor() {
-        this._input = this.createFileInput();
+        this.input = this.createFileInput();
     }
 
     private createFileInput() {
@@ -17,23 +17,22 @@ export class FileController {
     }
 
     openFileDialog() {
-        this._input.click();
+        this.input.click();
     }
 
     sendFile(file: File) {
         this._lastFile = file;
-        this._fileObserver.emit(file);
+        this.fileObserver.emit(file);
     }
     observeFile(callback: EventObserverCallback<File>) {
-        this._fileObserver.observe(callback);
+        this.fileObserver.observe(callback);
     }
     observeFileOnce(callback: EventObserverCallback<File>) {
-        this._fileObserver.observeOnce(callback);
+        this.fileObserver.observeOnce(callback);
     }
     removeObserver(callback: EventObserverCallback<File>) {
-        return this._fileObserver.remove(callback);
+        return this.fileObserver.remove(callback);
     }
 
-    get input() { return this._input; }
     get lastFile() { return this._lastFile; }
 }
