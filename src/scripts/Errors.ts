@@ -33,3 +33,10 @@ export class InvalidElementTypeError<T> extends Error {
         );
     }
 }
+
+export class UnknownActionError extends Error {
+    constructor(action: string) {
+        super(`There was not found an action named "${action}"`);
+        super.name = 'UnknownActionError';
+    }
+}
