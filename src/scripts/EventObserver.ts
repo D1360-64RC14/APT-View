@@ -1,4 +1,4 @@
-export type EventObserverCallback<E> = (event: E) => void;
+export type EventObserverCallback<E> = (event: E) => Promise<void>;
 
 export class EventObserver<E> {
     private callbacks = new Set<EventObserverCallback<E>>;
@@ -17,7 +17,7 @@ export class EventObserver<E> {
 
     // Observe/Subscribe to/Listen to events only once
     observeOnce(callback: EventObserverCallback<E>) {
-        const onceFunction = (event: E) => {
+        const onceFunction = async (event: E) => {
             callback(event);
             this.callbacks.delete(onceFunction);
         };
