@@ -1,4 +1,4 @@
-import { EventObserver, EventObserverCallback } from "../EventObserver";
+import { EventObserver, EventObserverCallback } from "../EventObserver.js";
 
 export class FileController {
     readonly input: HTMLInputElement;
