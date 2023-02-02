@@ -1,4 +1,5 @@
 import { InvalidElementTypeError } from "../Errors.js";
+import { FileAnalyzer } from "./FileAnalyzer.js";
 import { FileController } from "./FileController.js";
 import { ListenerController } from "./ListenerController.js";
 import { StateController } from "./StateController.js";
@@ -12,12 +13,14 @@ export class FileSelector {
     };
 
     private fileController = new FileController;
+    private fileAnalyzer: FileAnalyzer;
     private stateController: StateController;
     private listenerController: ListenerController;
 
     private acceptFileElements = new Set<HTMLElement>;
 
     constructor(formElement: HTMLFormElement) {
+        this.fileAnalyzer = new FileAnalyzer(this.fileController);
         this.stateController = new StateController(formElement, this.fileController);
         this.listenerController = new ListenerController(this.stateController, this.fileController);
 
