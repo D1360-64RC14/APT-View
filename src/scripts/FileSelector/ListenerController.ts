@@ -1,5 +1,5 @@
-import { FileController } from "./FileController";
-import { StateController } from "./StateController";
+import { FileController } from "./FileController.js";
+import { StateController } from "./StateController.js";
 
 export class ListenerController {
     constructor(
