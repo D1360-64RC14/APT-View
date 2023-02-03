@@ -51,18 +51,30 @@ export class FileSelector {
         const { root } = this.stateController.statefulForm;
 
         for (let i = 0; i < root.children.length; i++) {
-            const item = root.children.item(i);
+            const element = root.children.item(i);
 
-            if (!item) continue;
-            if (!(item instanceof HTMLElement)) continue;
+            if (!this.isValidElement(element)) continue;
+            if (!this.elementIsAcceptingFile(element)) continue;
 
-            const acceptFileAttr = item.getAttribute('accept-file');
-
-            if (acceptFileAttr === null) continue;
-            if (acceptFileAttr.toLowerCase() === 'false') continue;
-
-            this.acceptFileElements.add(item);
+            this.acceptFileElements.add(element);
         }
+    }
+
+    private isValidElement(item: Element | null): item is HTMLElement {
+        if (item === null) return false;
+        if (item instanceof HTMLElement) return true;
+
+        return false;
+    }
+
+    private elementIsAcceptingFile(item: HTMLElement) {
+        const acceptFileAttr = item.getAttribute('accept-file');
+
+        if (acceptFileAttr === null) return false;
+        if (acceptFileAttr === '0') return false;
+        if (acceptFileAttr.toLowerCase() === 'false') return false;
+
+        return true;
     }
 
     private attachListeners() {
