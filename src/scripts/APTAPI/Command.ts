@@ -1,12 +1,6 @@
-import { VerboseBoolean } from '../VerboseBoolean.js';
 import { Action } from './Action.js';
 import { APTDate } from './APTDate.js';
 import { FileProcessor } from './FileProcessor.js';
-
-export interface Component {
-    name: string;
-    value: string;
-}
 
 export class Command {
     constructor(
@@ -87,6 +81,11 @@ export class CommandBuilder {
     }
 }
 
+export interface Component {
+    name: string;
+    value: string;
+}
+
 export class CommandCreator {
     static fromTextBlock(text: string) {
         const lines = text.split('\n');
@@ -106,8 +105,7 @@ export class CommandCreator {
         const result = new Array<Component>;
 
         for (const line of lines) {
-            // Ignore invalid lines
-            if (!this.isValidComponentString(line)) continue;
+            if (!this.isComponentLike(line)) continue; // Ignore invalid lines
 
             const component = this.turnIntoComponent(line);
             result.push(component);
@@ -116,7 +114,7 @@ export class CommandCreator {
         return result;
     }
 
-    private static isValidComponentString(line: string) {
+    private static isComponentLike(line: string) {
         const hasColonSeparator = line.includes(': ');
         return hasColonSeparator;
     }
@@ -130,15 +128,15 @@ export class CommandCreator {
     }
 
     private static validateComponents(components: Component[]) {
-        const hasDuplicate = this.hasDuplicateComponentNames(
+        const [hasDuplicate, duplicateData] = this.hasDuplicateComponentNames(
             components, 'Start-Date', 'End-Date', 'Commandline', 'Requested-By'
         );
 
         if (hasDuplicate)
-            throw new Error(`Invalid text block: It has the duplicate key ${hasDuplicate.data}`);
+            throw new Error(`Invalid text block: It has the duplicate key ${duplicateData}`);
     }
 
-    private static hasDuplicateComponentNames(components: Component[], ...uniqueNames: string[]): VerboseBoolean<string | null> {
+    private static hasDuplicateComponentNames(components: Component[], ...uniqueNames: string[]): [boolean, string | null] {
         const foundNames = new Set<string>;
 
         for (const { name } of components) {
@@ -146,12 +144,12 @@ export class CommandCreator {
             const isDuplicate = foundNames.has(name);
 
             if (nameShouldBeUnique && isDuplicate)
-                return VerboseBoolean.true(name);
+                return [true, name];
 
             foundNames.add(name);
         }
 
-        return VerboseBoolean.false();
+        return [false, null];
     }
 
     private static buildCommand(components: Component[]) {
