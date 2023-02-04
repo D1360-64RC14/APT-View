@@ -1,3 +1,4 @@
+import { VerboseBoolean } from '../VerboseBoolean.js';
 import { Action } from './Action.js';
 import { APTDate } from './APTDate.js';
 import { FileProcessor } from './FileProcessor.js';
@@ -133,22 +134,24 @@ export class CommandCreator {
             components, 'Start-Date', 'End-Date', 'Commandline', 'Requested-By'
         );
 
-        if (hasDuplicate) throw new Error('Wrong text block. It has duplicate keys');
+        if (hasDuplicate)
+            throw new Error(`Invalid text block: It has the duplicate key ${hasDuplicate.data}`);
     }
 
-    private static hasDuplicateComponentNames(components: Component[], ...uniqueNames: string[]) {
+    private static hasDuplicateComponentNames(components: Component[], ...uniqueNames: string[]): VerboseBoolean<string | null> {
         const foundNames = new Set<string>;
 
         for (const { name } of components) {
             const nameShouldBeUnique = uniqueNames.includes(name);
-            const hasName = foundNames.has(name);
+            const isDuplicate = foundNames.has(name);
 
-            if (nameShouldBeUnique && hasName) return true;
+            if (nameShouldBeUnique && isDuplicate)
+                return VerboseBoolean.true(name);
 
             foundNames.add(name);
         }
 
-        return false;
+        return VerboseBoolean.false();
     }
 
     private static buildCommand(components: Component[]) {
