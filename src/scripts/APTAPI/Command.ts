@@ -88,7 +88,7 @@ export class CommandBuilder {
 }
 
 export class CommandCreator {
-    static formTextBlock(text: string) {
+    static fromTextBlock(text: string) {
         const lines = text.split('\n');
         return this.fromTextLines(lines);
     }
