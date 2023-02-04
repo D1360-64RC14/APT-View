@@ -1,6 +1,6 @@
 import { Action } from './Action.js';
 import { APTDate } from './APTDate.js';
-import { FileProcessor } from './FileProcessor.js';
+import { HistoryFileProcessor } from './HistoryFileProcessor.js';
 
 export class Command {
     constructor(
@@ -98,7 +98,7 @@ export class CommandCreator {
         return this.buildCommand(components);
     }
     static fromFile(file: File) {
-        return FileProcessor.process(file);
+        return HistoryFileProcessor.process(file);
     }
 
     private static parseLinesIntoComponentList(lines: string[]) {

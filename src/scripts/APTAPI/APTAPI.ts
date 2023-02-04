@@ -1,7 +1,7 @@
-import { FileProcessor } from "./FileProcessor.js";
+import { HistoryFileProcessor } from "./HistoryFileProcessor.js";
 
 export class APTAPI {
     processFile(file: File) {
-        return FileProcessor.process(file);
+        return HistoryFileProcessor.process(file);
     }
 }
