@@ -1,4 +1,4 @@
-import { TextTools } from "../TextTools.js";
+import { TextTools } from "../Tools/TextTools.js";
 import { Command, CommandCreator } from "./Command.js";
 
 /**
