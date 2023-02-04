@@ -1,52 +1,47 @@
-import { InvalidElementTypeError } from "../Errors.js";
-import { FileAnalyzer } from "./FileAnalyzer.js";
+import { FileProcessor } from "./FileProcessor.js";
 import { FileController } from "./FileController.js";
 import { ListenerController } from "./ListenerController.js";
 import { StateController } from "./StateController.js";
+import { ValidStates } from "./ValidStates.js";
+import { ElementTools } from "../Tools/ElementTools.js";
 
 export class FileSelector {
-    readonly validStates = {
-        WAITING: 'waiting-file',
-        SELECTED: 'file-selected',
-        ANALYZING: 'analyzing',
-        ERROR: 'error'
-    };
-
+    private rootElement: HTMLFormElement;
+    private validStates: ValidStates;
     private fileController = new FileController;
-    private fileAnalyzer: FileAnalyzer;
+    private fileProcessor: FileProcessor;
     private stateController: StateController;
     private listenerController: ListenerController;
 
     private acceptFileElements = new Set<HTMLElement>;
 
     constructor(formElement: HTMLFormElement) {
-        this.fileAnalyzer = new FileAnalyzer(this.fileController);
-        this.stateController = new StateController(formElement, this.fileController);
+        this.rootElement = formElement;
+
+        this.validStates = new ValidStates(formElement);
+        this.populateValidStates();
+
+        this.fileProcessor = new FileProcessor(this.fileController);
+        this.stateController = new StateController(formElement, this.fileController, this.validStates);
         this.listenerController = new ListenerController(this.stateController, this.fileController);
 
         this.populateAcceptFileElements();
         this.attachListeners();
     }
 
-    // #region static
-    /** @throws {TypeError, InvalidElementTypeError} */
-    static fromSelector(cssSelector: string) {
-        const result = document.querySelectorAll(cssSelector);
-
-        if (result.length === 0) throw new TypeError(`Not found elements with selector "${cssSelector}"`);
-
-        const element = result.item(0);
-
-        InvalidElementTypeError.check(element, HTMLFormElement);
-
-        if (result.length > 1) console.warn(`There was found other ${result.length - 1} elements with selector ${cssSelector}`);
-
-        // Its beeing checked for HTMLFormElement at InvalidElementTypeError.check
-        return new FileSelector(element as HTMLFormElement);
+    static fromSelector(selector: string) {
+        const element = ElementTools.fromSelector(selector, HTMLFormElement);
+        return new FileSelector(element);
     }
-    // #endregion
 
-    // #region private
+    private populateValidStates() {
+        this.validStates
+            .set('waiting-file', 'section[for-state="waiting-file"]')
+            .set('file-selected', 'section[for-state="file-selected"]')
+            .set('processing-file', 'section[for-state="processing-file"]')
+            .set('error', 'section[for-state="error"]');
+    }
+
     private populateAcceptFileElements() {
         const { root } = this.stateController.statefulForm;
 
@@ -68,13 +63,7 @@ export class FileSelector {
     }
 
     private elementIsAcceptingFile(item: HTMLElement) {
-        const acceptFileAttr = item.getAttribute('accept-file');
-
-        if (acceptFileAttr === null) return false;
-        if (acceptFileAttr === '0') return false;
-        if (acceptFileAttr.toLowerCase() === 'false') return false;
-
-        return true;
+        return ElementTools.booleanAttributeOf(item, 'accept-file');
     }
 
     private attachListeners() {
@@ -87,5 +76,4 @@ export class FileSelector {
             item.addEventListener('click', this.listenerController.whenAreaClicked.bind(this));
         }
     }
-    // #endregion
 }

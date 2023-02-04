@@ -1,48 +1,20 @@
 import { StateElement } from "../StateElement.js";
 import { FileController } from "./FileController.js";
-
-interface FileSelectorStates {
-    waitingFile: HTMLLabelElement;
-    fileSelected: HTMLLabelElement;
-    analyzingFile: HTMLLabelElement;
-    error: HTMLLabelElement;
-}
+import { ValidStates } from "./ValidStates.js";
 
 export class StateController {
-    readonly validStates = {
-        WAITING: 'waiting-file',
-        SELECTED: 'file-selected',
-        ANALYZING: 'analyzing',
-        ERROR: 'error'
-    };
-
-    readonly stateItems: FileSelectorStates;
     readonly statefulForm: StateElement;
 
-    private fileController: FileController;
-
-    constructor(formElement: HTMLFormElement, fileController: FileController) {
+    constructor(
+        formElement: HTMLFormElement,
+        readonly fileController: FileController,
+        readonly validStates: ValidStates
+    ) {
         this.statefulForm = new StateElement(
             formElement,
-            this.validStateList,
-            this.validStates.WAITING
+            this.validStates.allNames,
+            'waiting-file'
         );
-
-        this.stateItems = {
-            waitingFile: this.formQueryOrThrow('section[for-state="waiting-file"]'),
-            fileSelected: this.formQueryOrThrow('section[for-state="file-selected"]'),
-            analyzingFile: this.formQueryOrThrow('section[for-state="analyzing"]'),
-            error: this.formQueryOrThrow('section[for-state="error"]')
-        };
-
-        this.fileController = fileController;
-    }
-
-    /** @throws {Error} */
-    formQueryOrThrow<E extends Element = Element>(selector: string): E {
-        const element = this.statefulForm.root.querySelector<E>(selector);
-        if (!element) throw new Error(`Mandatory element by selector "${selector}" not found inside form`);
-        return element;
     }
 
     fileHover(enable: boolean) {
@@ -57,10 +29,12 @@ export class StateController {
         // Just to garantee
         this.fileHover(false);
 
-        this.statefulForm.changeStateTo(this.validStates.WAITING);
+        this.statefulForm.changeStateTo('waiting-file');
     }
     switchToFileSelectedState(files: FileList) {
-        const filenameBEl = this.stateItems.fileSelected.querySelector<HTMLElement>('b.filename');
+        const fileSelectedStateEl = this.validStates.getElementOf('file-selected');
+        const filenameBEl = fileSelectedStateEl.querySelector<HTMLElement>('b.filename');
+
         if (!filenameBEl) throw new TypeError('b.filename not found: is null');
 
         const file = files.item(0);
@@ -73,16 +47,16 @@ export class StateController {
         filenameBEl.innerText = file.name;
 
         this.fileController.sendFile(file);
-        this.statefulForm.changeStateTo(this.validStates.SELECTED);
+        this.statefulForm.changeStateTo('file-selected');
     }
     switchToErrorState(errorMessage: string) {
-        const pEl = this.stateItems.error.querySelector<HTMLParagraphElement>('p.errorMessage');
+        const errorStateEl = this.validStates.getElementOf('error');
+        const pEl = errorStateEl.querySelector<HTMLParagraphElement>('p.errorMessage');
+
         if (!pEl) throw new TypeError('p.errorMessage not found: is null');
 
         pEl.innerText = errorMessage;
 
-        this.statefulForm.changeStateTo(this.validStates.ERROR);
+        this.statefulForm.changeStateTo('error');
     }
-
-    get validStateList() { return Object.values(this.validStates); }
 }
