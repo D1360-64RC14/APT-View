@@ -5,7 +5,7 @@ import { Command, CommandCreator } from "./Command.js";
  * Process the file throught `process(File)` method and
  * returns a list of `Command` objects.
  */
-export class FileProcessor {
+export class HistoryFileProcessor {
     private static commands = new Array<Command>;
     private static incompleteCommandLines = new Array<string>;
     private static fileLines: string[];
@@ -14,7 +14,7 @@ export class FileProcessor {
         this.fileLines = await this.extractLinesFromFile(file);
 
         this.separateCommandLines();
-        this.completeCommandFromResidualLines();
+        this.completeCommandIfResidualLines();
 
         return this.commands;
     }
@@ -52,7 +52,7 @@ export class FileProcessor {
         this.incompleteCommandLines = new Array<string>;
     }
 
-    private static completeCommandFromResidualLines() {
+    private static completeCommandIfResidualLines() {
         if (this.hasIncompleteLines)
             this.completeActualCommand();
     }
