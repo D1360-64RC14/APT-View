@@ -1,4 +1,3 @@
-import { FileProcessor } from "./FileProcessor.js";
 import { FileController } from "./FileController.js";
 import { ListenerController } from "./ListenerController.js";
 import { StateController } from "./StateController.js";
@@ -9,7 +8,6 @@ export class FileSelector {
     private rootElement: HTMLFormElement;
     private validStates: ValidStates;
     private fileController = new FileController;
-    private fileProcessor: FileProcessor;
     private stateController: StateController;
     private listenerController: ListenerController;
 
@@ -21,7 +19,6 @@ export class FileSelector {
         this.validStates = new ValidStates(formElement);
         this.populateValidStates();
 
-        this.fileProcessor = new FileProcessor(this.fileController);
         this.stateController = new StateController(formElement, this.fileController, this.validStates);
         this.listenerController = new ListenerController(this.stateController, this.fileController);
 
@@ -43,10 +40,10 @@ export class FileSelector {
     }
 
     private populateAcceptFileElements() {
-        const { root } = this.stateController.statefulForm;
+        const { rootElement } = this.stateController.statefulForm;
 
-        for (let i = 0; i < root.children.length; i++) {
-            const element = root.children.item(i);
+        for (let i = 0; i < rootElement.children.length; i++) {
+            const element = rootElement.children.item(i);
 
             if (!this.isValidElement(element)) continue;
             if (!this.elementIsAcceptingFile(element)) continue;
