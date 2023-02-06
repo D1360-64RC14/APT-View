@@ -19,9 +19,9 @@ export class StateController {
 
     fileHover(enable: boolean) {
         if (enable) {
-            this.statefulForm.root.classList.add('hovering-file');
+            this.statefulForm.rootElement.classList.add('hovering-file');
         } else {
-            this.statefulForm.root.classList.remove('hovering-file');
+            this.statefulForm.rootElement.classList.remove('hovering-file');
         }
     }
 

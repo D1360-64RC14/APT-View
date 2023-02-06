@@ -1,14 +1,14 @@
-import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeError } from './Errors.js';
+import { ElementTools } from './Tools/ElementTools.js';
 
 /**
  * A way to separate the HTML in states/steps.
  * Example:
  * 
  * ```html
- * <main data-state="tutorial-steps">
+ * <main data-state="default">
  *      <h1>The tutorial is</h1>
  * 
- *      <span for-state="first">
+ *      <span for-state="default">
  *      </span>
  * 
  *      <span for-state="second" class="hidden">
@@ -21,7 +21,6 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * 
  * You can place a `data-state` attribute to an
  * element to turn it into a state container.
- * This is your `dataStateId`.
  * 
  * Then, you can define which elements will be
  * turned on in each state placing an attribute
@@ -31,102 +30,142 @@ import { ElementHaventStateError, StateNotSupportedError, InvalidElementTypeErro
  * items from beeing displayed during initialization.
  * It will be removed when all get done!
  * 
- * It is possible to enable a debug mode setting the
- * attribute `data-debug`, or defining as 'true'.
+ * It is possible to enable a debug mode with the
+ * attribute `data-debug`. You can disable it by
+ * removing the attribute, setting it to "0", or `false`.
+ * Any value different from that is recognised as `true`.
  */
 export class StateElement {
-    readonly root: HTMLElement;
-    readonly supportedStates: string[];
-    readonly childStateItems: HTMLElement[] = [];
-    private currentState: string;
+    private linkedStateItems = new Map<string, HTMLElement[]>();
+    private currentState!: string;
 
-    // Keys: state name
-    // Values: children elements binded to Key name
-    private stateItems = new Map<string, HTMLElement[]>();
+    private registeredChildrenItems = new Array<StateChild>;
 
-    constructor(element: HTMLElement, supportedStates: string[], initialState?: string) {
-        // TODO: Refact constructor logic
-        this.root = element;
-        this.supportedStates = supportedStates;
-
-        const attributeState = this.validateElementHaveAttributeAndReturnIt();
-
-        this.checkIsSupportedStateOrThrow(attributeState);
-        this.currentState = attributeState;
-
-        if (this.isDebugEnable) {
-            console.warn(
-                'Debug mode is enable on the element', this.root, '.',
-                (initialState ? `Using initialState "${attributeState}" instead of "${initialState}".` : '')
-            );
-        }
+    constructor(readonly rootElement: HTMLElement, readonly supportedStates: string[], private initialState?: string) {
+        this.checkRootIsAStateContainer();
 
         this.populateStateItems();
-        this.searchForStateItems();
 
-        if (initialState && !this.isDebugEnable) {
-            this.changeStateTo(initialState);
-        } else {
-            this.updateItemsVisibility();
-        }
+        this.registerChildrenItems();
+        this.linkChildrenToStates();
 
-        this.removeClassHidden();
+        this.initialize();
+
+        if (this.isDebugEnable)
+            this.sendDebugWarningMessage();
     }
 
-    // #region static
-    /** @throws {TypeError, InvalidElementTypeError} */
     static fromSelector(cssSelector: string, supportedStates: string[]) {
-        const result = document.querySelectorAll(cssSelector);
+        const element = ElementTools.fromSelector(cssSelector, HTMLElement);
 
-        if (result.length === 0) throw new TypeError(`Not found elements with selector "${cssSelector}"`);
-
-        const element = result.item(0);
-
-        InvalidElementTypeError.check(element, HTMLElement);
-
-        if (result.length > 1) console.warn(`There was found other ${result.length - 1} elements with selector ${cssSelector}`);
-
-        // Its beeing checked for HTMLElement at InvalidElementTypeError.check
-        return new StateElement(element as HTMLElement, supportedStates);
+        return new StateElement(element, supportedStates);
     }
-    // #endregion
 
-    // #region private
-    private validateElementHaveAttributeAndReturnIt() {
-        const attribute = this.root.getAttribute('data-state');
-        if (attribute) return attribute;
+    get state() {
+        return this.currentState;
+    }
 
-        throw new ElementHaventStateError;
+    private checkRootIsAStateContainer() {
+        if (this.elementState) return;
+
+        throw new Error(`Element it's not a state container. Didn't have attribute 'data-state'`);
     }
 
     private populateStateItems() {
         for (const state of this.supportedStates) {
-            this.stateItems.set(state, []);
+            this.linkedStateItems.set(state, new Array<HTMLElement>);
         }
     }
 
-    private searchForStateItems() {
-        const { children } = this.root;
+    private registerChildrenItems() {
+        const { children } = this.rootElement;
 
-        // Faster than copying the collection to a new array.
         for (let i = 0; i < children.length; i++) {
-            const element = children.item(i);
+            const childElement = children.item(i);
 
-            if (element === null) continue;
-            if (!(element instanceof HTMLElement)) continue;
+            if (!ElementTools.elementIs(HTMLElement, childElement)) continue;
 
-            const stateName = element.getAttribute('for-state');
+            const forState = childElement.getAttribute('for-state');
 
-            if (stateName === null) continue;
-            if (!this.checkIsSupportedState(stateName)) continue;
+            if (!this.isSupportedState(forState)) continue;
+            const stateChild = new StateChild(forState, childElement);
 
-            this.stateItems.get(stateName)?.push(element);
-            this.childStateItems.push(element);
+            this.registerChild(stateChild);
         }
+    }
+
+    isSupportedState(name: string | null): name is string {
+        if (name === null) return false;
+        return this.supportedStates.includes(name);
+    }
+
+    private registerChild(child: StateChild) {
+        this.registeredChildrenItems.push(child);
+    }
+
+    private linkChildrenToStates() {
+        for (const item of this.registeredChildrenItems) {
+            this.linkStateChild(item);
+        }
+    }
+
+    private linkStateChild(stateChild: StateChild) {
+        const selectedStates = this.linkedStateItems.get(stateChild.forState);
+        selectedStates?.push(stateChild.stateElement);
+    }
+
+    private initialize() {
+        const bestInitialState = this.chooseBestInitialState();
+
+        this.changeStateTo(bestInitialState);
+        this.removeClassHidden();
+    }
+
+    private chooseBestInitialState() {
+        const options = [
+            this.initialState,
+            this.elementState,
+            this.registeredStateNames.at(0)
+        ];
+
+        if (this.isDebugEnable)
+            return this.elementState;
+
+        const initializableOptions = options.filter(this.isInitializableWithState);
+
+        if (initializableOptions.length === 0)
+            this.impossibleToInitialize();
+
+        return initializableOptions[0];
+    }
+
+    get isDebugEnable() {
+        return ElementTools.booleanAttributeOf(this.rootElement, 'data-debug');
+    }
+
+    get elementState() {
+        const attr = this.rootElement.getAttribute('data-state');
+        if (attr === null) throw new Error("Can't get element state: element haven't attribute data-state");
+        return attr;
+    }
+
+    get registeredStateNames() {
+        return this.registeredChildrenItems.map(item => item.forState);
+    }
+
+    private impossibleToInitialize(): never {
+        throw new Error('Impossible to initialize! No initial state, or element-body state, or registered states');
+    }
+
+    private isInitializableWithState(name: string | null | undefined): name is string {
+        if (!name) return false; // null, undefined, or empty string
+        if (!this.isSupportedState(name)) return false;
+
+        return true;
     }
 
     private removeClassHidden() {
-        const { children } = this.root;
+        const { children } = this.rootElement;
 
         for (let i = 0; i < children.length; i++) {
             const element = children.item(i);
@@ -137,53 +176,42 @@ export class StateElement {
             element.classList.remove('hidden');
         }
     }
-    // #endregion
 
-    // #region public
-    get state() {
-        return this.currentState;
-    }
-    get isDebugEnable() {
-        const attribute = this.root.getAttribute('data-debug');
-
-        switch (attribute?.toLowerCase()) {
-            case 'true':
-            case '':
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    checkIsSupportedState(name: string): boolean {
-        return this.supportedStates.indexOf(name) !== -1;
-    }
-    checkIsSupportedStateOrThrow(name: string) {
-        if (this.checkIsSupportedState(name)) return;
-
-        throw new StateNotSupportedError(name);
-    }
-
-    updateItemsVisibility() {
-        for (const item of this.childStateItems) {
-            if (item.getAttribute('for-state') === this.currentState) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
-        }
-
-        this.updateDataStateAttribute();
-    }
-    updateDataStateAttribute() {
-        this.root.setAttribute('data-state', this.currentState);
+    private sendDebugWarningMessage() {
+        console.warn(
+            'Debug mode is enable in the element', this.rootElement, '.',
+            `Using initialState as "${this.elementState}".`
+        );
     }
 
     changeStateTo(stateName: string) {
-        this.checkIsSupportedStateOrThrow(stateName);
+        if (!this.isSupportedState(stateName))
+            throw new Error(`Invalid state "${stateName}"`);
 
         this.currentState = stateName;
-        this.updateItemsVisibility();
+
+        this.updateChildrenVisibility();
+        this.updateDataStateAttribute();
     }
-    // #endregion
+
+    updateChildrenVisibility() {
+        for (const item of this.registeredChildrenItems) {
+            if (item.forState === this.currentState) {
+                item.stateElement.style.display = '';
+            } else {
+                item.stateElement.style.display = 'none';
+            }
+        }
+    }
+
+    private updateDataStateAttribute() {
+        this.rootElement.setAttribute('data-state', this.currentState);
+    }
+}
+
+class StateChild {
+    constructor(
+        public forState: string,
+        public stateElement: HTMLElement
+    ) { }
 }
