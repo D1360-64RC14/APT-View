@@ -26,8 +26,8 @@ export class FileSelector {
         this.attachListeners();
     }
 
-    static fromSelector(selector: string) {
-        const element = ElementTools.fromSelector(selector, HTMLFormElement);
+    static fromSelector(cssSelector: string) {
+        const element = ElementTools.fromSelector(cssSelector, HTMLFormElement);
         return new FileSelector(element);
     }
 
