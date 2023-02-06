@@ -34,4 +34,12 @@ export class ElementTools {
 
         return true;
     }
+
+    static elementIs<E extends Element>(typeClass: new () => E, element?: Element | null): element is E {
+        if (element === null) return false;
+        if (element === undefined) return false;
+        if (!(element instanceof typeClass)) return false;
+
+        return true;
+    }
 }
