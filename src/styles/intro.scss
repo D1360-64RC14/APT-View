@@ -125,7 +125,7 @@ main {
         background-color: $oc-green-1;
         border-color: $oc-green-6;
     }
-    &[for-state=analyzing] {
+    &[for-state=processing-file] {
         background-color: $oc-yellow-1;
         border-color: $oc-yellow-6;
     }
