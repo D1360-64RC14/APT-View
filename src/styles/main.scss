@@ -32,7 +32,7 @@ body {
     background-color: $oc-gray-0;
 
     grid-template-columns: 15vw [main-start] auto [main-end] 15vw;
-    grid-template-rows: minmax(7em, 16%) min-content auto;
+    grid-template-rows: clamp(5.8em, 16%, 13em) min-content auto;
     grid-auto-flow: column;
 
     grid-template-areas: 
@@ -40,6 +40,17 @@ body {
         '. divisor .'
         '. main    .'
     ;
+}
+
+header {
+    grid-area: header;
+
+    display: flex;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
 }
 
 hr {
@@ -54,4 +65,10 @@ hr {
 
     border: unset;
     border-radius: 2px;
+}
+
+main {
+    grid-area: main;
+
+    padding: 2em;
 }

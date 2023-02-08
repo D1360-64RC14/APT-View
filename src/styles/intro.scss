@@ -29,29 +29,7 @@
     p { margin: 0; }
 }
 
-header {
-    grid-area: header;
-
-    display: flex;
-
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 2em;
-}
-
 /* #endregion */
-
-/* #region Main */
-main {
-    grid-area: main;
-
-    padding: 2em;
-
-    input {
-        display: none;
-    }
-}
 
 /* #region FormFileSelector */
 
@@ -139,7 +117,5 @@ main {
     background-color: $oc-indigo-2;
     border-color: $oc-indigo-6;
 }
-
-/* #endregion */
 
 /* #endregion */
