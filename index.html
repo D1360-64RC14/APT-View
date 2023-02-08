@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="static/styles/main.css">
 </head>
 
-<body data-state="intro" data-theme="light">
+<body data-state="file-view" data-theme="light" data-debug>
     <header for-state="intro">
         <h1 class="logo">
             APT<span>#</span>View
@@ -18,8 +18,23 @@
             <p>Follow the steps below to see them!</p>
         </span>
     </header>
-    <header for-state="file-view">
-        <!-- TODO: -->
+    <header for-state="file-view" class="hidden">
+
+        <section id="installed-packages">
+            <h3>13</h3>
+            <p>Installed</p>
+        </section>
+
+        <section id="updated-packages">
+            <h3>20</h3>
+            <p>Updated</p>
+        </section>
+
+        <section id="removed-packages">
+            <h3>10</h3>
+            <p>Removed</p>
+        </section>
+
     </header>
     <hr>
     <main for-state="intro">
@@ -73,9 +88,10 @@
                     <p class="errorMessage">ERROR MESSAGE HERE</p>
                 </article>
             </section>
+
         </form>
     </main>
-    <main for-state="file-view">
+    <main for-state="file-view" class="hidden">
         <!-- TODO: -->
     </main>
 </body>
