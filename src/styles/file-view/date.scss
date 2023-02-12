@@ -1,0 +1,23 @@
+h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.day-group {
+    display: flex;
+}
+
+.day-label {
+    display: flex;
+
+    padding: 0 $thumb-separation 0 calc($thumb-separation * 2);
+    height: $commandline-string-height;
+
+    justify-content: end;
+    align-items: center;
+
+    color: $oc-gray-7;
+    font-size: clamp(0.75em, 2vw, 1.075em);
+    font-weight: normal;
+    white-space: nowrap;
+}

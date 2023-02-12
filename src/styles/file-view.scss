@@ -55,5 +55,22 @@ header {
 
 /* #region Main */
 
+main > article {
+    $commandline-string-height: 3rem;
+    $action-height: 2.25em;
+    $thumb-separation: 0.5em;
+
+    margin-top: clamp(0.75em, 3.5vh, 1.5em);
+
+    background-color: $oc-gray-2;
+    border-radius: 0.5em;
+
+    overflow: hidden;
+
+    font-family: 'Ubuntu Mono', monospaced;
+
+    @import 'file-view/date';
+    @import 'file-view/commands';
+}
 
 /* #endregion */

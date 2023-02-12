@@ -1,0 +1,91 @@
+li, ul {
+    margin: 0;
+    padding: 0;
+}
+li {
+    list-style-type: none;
+}
+
+.line {
+    margin: 0;
+    padding: 0;
+
+    height: $commandline-string-height;
+}
+
+.thumb {
+    padding: 0 $thumb-separation;
+
+    border: 0.372em solid $oc-gray-8;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.action {
+    height: $action-height;
+
+    padding: 0.4em;
+
+    font-size: 95%;
+
+    overflow: hidden;
+
+    ul {
+        display: flex;
+
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5em;
+    }
+
+    &.focus {
+        height: 100%;
+    }
+}
+
+.card {
+    padding: 0.2em 0.45em;
+
+    border-radius: 0.35em;
+}
+
+.command-string {
+    display: flex;
+
+    align-items: center;
+
+    font-weight: normal;
+    text-overflow: clip;
+}
+
+.command-list {
+    width: 100%;
+}
+
+.command-action-list {
+    .installed {
+        background-color: $oc-lime-1;
+        border-color: $oc-lime-8;
+
+        .card {
+            background-color: $oc-lime-3;
+        }
+    }
+    .updated {
+        background-color: $oc-blue-1;
+        border-color: $oc-blue-7;
+
+        .card {
+            background-color: $oc-blue-2;
+        }
+    }
+    .removed {
+        background-color: $oc-red-1;
+        border-color: $oc-red-7;
+
+        .card {
+            background-color: $oc-red-2;
+        }
+    }
+}
