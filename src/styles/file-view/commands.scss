@@ -77,3 +77,15 @@ li {
         }
     }
 }
+
+&:empty::after {
+    content: 'No logs to be displayed...';
+
+    display: block;
+
+    padding-block: 1em;
+
+    font-family: 'Ubuntu', sans-serif;
+    text-align: center;
+    color: $oc-gray-5;
+}

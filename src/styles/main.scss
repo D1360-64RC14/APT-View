@@ -73,3 +73,7 @@ hr {
 main {
     grid-area: main;
 }
+
+@media (max-width: 1000px) {
+    @import 'media-queries/main-1000px';
+}
