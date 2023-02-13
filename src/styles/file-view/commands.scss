@@ -1,20 +1,11 @@
-li, ul {
-    margin: 0;
-    padding: 0;
-}
 li {
     list-style-type: none;
 }
 
-.line {
-    margin: 0;
-    padding: 0;
-
-    height: $commandline-string-height;
-}
+.line {}
 
 .thumb {
-    padding: 0 $thumb-separation;
+    padding-left: $thumb-separation;
 
     border: 0.372em solid $oc-gray-8;
     border-top: 0;
@@ -23,9 +14,7 @@ li {
 }
 
 .action {
-    height: $action-height;
-
-    padding: 0.4em;
+    padding: 0.35rem $thumb-separation;
 
     font-size: 95%;
 
@@ -51,16 +40,15 @@ li {
 }
 
 .command-string {
-    display: flex;
-
-    align-items: center;
+    padding-block: $commandline-string-padding;
 
     font-weight: normal;
-    text-overflow: clip;
 }
 
-.command-list {
-    width: 100%;
+.command-list {}
+
+.command {
+    font-family: 'Ubuntu Mono', monospaced;
 }
 
 .command-action-list {

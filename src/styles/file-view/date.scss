@@ -1,8 +1,3 @@
-h3 {
-    margin: 0;
-    padding: 0;
-}
-
 .day-group {
     display: flex;
 }
@@ -10,12 +5,12 @@ h3 {
 .day-label {
     display: flex;
 
-    padding: 0 $thumb-separation 0 calc($thumb-separation * 2);
-    height: $commandline-string-height;
+    padding-inline: calc($thumb-separation * 2) $thumb-separation;
+    padding-block: $commandline-string-padding;
 
     justify-content: end;
-    align-items: center;
 
+    font-family: 'Ubuntu', sans-serif;
     color: $oc-gray-7;
     font-size: clamp(0.75em, 2vw, 1.075em);
     font-weight: normal;
