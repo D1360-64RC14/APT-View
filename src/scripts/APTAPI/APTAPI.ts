@@ -9,7 +9,9 @@ export class APTAPI {
     private commandsGroupedByDay?= new Array<CommandDayGroup>;
 
     async loadFile(file: File) {
-        this.commands = await HistoryFileProcessor.process(file);
+        this.commands.push(
+            ...await HistoryFileProcessor.process(file)
+        );
 
         this.sortCommands();
         this.calculateActionAmounts();
