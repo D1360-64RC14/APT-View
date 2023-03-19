@@ -79,7 +79,7 @@ li {
 }
 
 &:empty::after {
-    content: 'No logs to be displayed...';
+    content: 'No logs to display...';
 
     display: block;
 
