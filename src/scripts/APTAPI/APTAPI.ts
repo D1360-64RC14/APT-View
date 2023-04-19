@@ -1,16 +1,33 @@
+import { APTCrawler } from "../APT/APTCrawler.js";
+import { ExecutionLog } from "../APT/ExecutionLog";
 import { MapTools } from "../Tools/MapTools.js";
 import { Command } from "./Command.js";
 import { CommandDayGroup } from "./CommandDayGroup.js";
-import { HistoryFileProcessor } from "./HistoryFileProcessor.js";
+import { LogProcessor } from "./LogProcessor";
 
-export class APTAPI {
+export class APTAPI implements APTCrawler {
+    private logs = new Array<ExecutionLog>();
+
+    async crawlFile(file: File) {
+
+    }
+    async crawlText(text: string) {
+
+    }
+
+    get packagesSortedByDate(): ExecutionLog[] {
+        return this.logs.sort((logA, logB) => logA.startDate.getDate() - logB.startDate.getDate());
+    }
+}
+
+export class APTAPI_ {
     private commands = new Array<Command>;
     private _actionAmounts?= new Map<string, number>;
     private commandsGroupedByDay?= new Array<CommandDayGroup>;
 
     async loadFile(file: File) {
         this.commands.push(
-            ...await HistoryFileProcessor.process(file)
+            ...await LogProcessor.process(file)
         );
 
         this.sortCommands();
