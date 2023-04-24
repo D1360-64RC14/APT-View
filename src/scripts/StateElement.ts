@@ -156,7 +156,7 @@ export class StateElement {
         this.updateDataStateAttribute();
     }
 
-    updateChildrenVisibility() {
+    private updateChildrenVisibility() {
         for (const [state, elements] of this.states.entries()) {
             if (state === this.currentState) {
                 elements.forEach(element => { element.style.display = '' })
