@@ -1,6 +1,6 @@
 import { APTCrawler } from "../APT/APTCrawler.js";
 
-class APTView {
+export class APTView {
     private crawler: APTCrawler;
     private fileInput?: HTMLInputElement;
 
@@ -16,5 +16,9 @@ class APTView {
 
     private handleInputChange(event: Event) {
         console.log(event);
+
+        // WIP
     }
+
+
 }

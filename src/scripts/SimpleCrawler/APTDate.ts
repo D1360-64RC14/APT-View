@@ -1,4 +1,4 @@
-export interface DateFormat {
+export interface DateParts {
     year: number; month: number; day: number;
     hour: number; minute: number; second: number;
 }
@@ -7,30 +7,36 @@ export class APTDate extends Date {
     // Example: 'YYYY-MM-DD  hh:mm:ss'
     static readonly DATE_FORMAT = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2}) {2}(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})$/;
 
-    private dateString: string;
+    private aptDateString: string;
 
     constructor(date: Date)
     constructor(dateString: string)
-    constructor(dateOverloaded: Date | string)
     constructor(dateOrDateString: Date | string) {
         if (dateOrDateString instanceof Date) {
             super(dateOrDateString);
-            this.dateString = APTDate.dateToAPTDateString(dateOrDateString);
+            this.aptDateString = this.dateToAPTDateString(dateOrDateString);
         } else {
-            const { year, month, day, hour, minute, second } = APTDate.processDateString(dateOrDateString);
-            super(year, month, day, hour, minute, second);
-            this.dateString = dateOrDateString;
+            super();
+            this.aptDateString = dateOrDateString;
+            const { year, month, day, hour, minute, second } = this.extractPartsFromAPTDateString(dateOrDateString);
+
+            this.setFullYear(year);
+            this.setMonth(month - 1);
+            this.setDate(day);
+            this.setHours(hour);
+            this.setMinutes(minute);
+            this.setSeconds(second);
         }
     }
 
-    private static processDateString(dateString: string) {
+    private extractPartsFromAPTDateString(dateString: string) {
         const regExpResult = APTDate.DATE_FORMAT.exec(dateString);
         if (regExpResult === null) throw new Error(`Wrong string date format: "${dateString}"`);
 
-        return APTDate.ungroupExpressionResult(regExpResult);
+        return this.ungroupExpressionResult(regExpResult);
     }
 
-    private static ungroupExpressionResult(regExpExec: RegExpExecArray): DateFormat {
+    private ungroupExpressionResult(regExpExec: RegExpExecArray): DateParts {
         if (!regExpExec.groups) throw new TypeError(`regExpExec.groups is undefined at ${APTDate.name}.ungroupExpressionResult`);
 
         const expEntries = Object.entries(regExpExec.groups);
@@ -47,7 +53,7 @@ export class APTDate extends Date {
         };
     }
 
-    private static dateToAPTDateString(date: Date) {
+    private dateToAPTDateString(date: Date) {
         const { getFullYear, getMonth, getDate, getHours, getMinutes, getSeconds } = date;
 
         return [
@@ -56,5 +62,7 @@ export class APTDate extends Date {
         ].join('');
     }
 
-    [Symbol.toStringTag]() { return this.dateString; }
+    getAPTDateString() {
+        return this.aptDateString;
+    }
 }
